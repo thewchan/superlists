@@ -5,4 +5,4 @@ from django.shortcuts import render
 
 def home_page(request: HttpRequest) -> HttpResponse:
     """Renders the hompage."""
-    return HttpResponse("<html><title>To-Do lists</title></html>")
+    return render(request, "home.html")
