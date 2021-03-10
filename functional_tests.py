@@ -7,11 +7,11 @@ from selenium import webdriver
 class NewVisitorTest(unittest.TestCase):
     """Test class related to new visitor to superlist."""
 
-    def set_up(self):
+    def setUp(self):
         """Set up browser for unit tests."""
         self.browser = webdriver.Firefox()
 
-    def tear_down(self):
+    def tearDown(self):
         """Close browser windows after test completion."""
         self.browser.quit()
 

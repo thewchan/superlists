@@ -1,6 +1,8 @@
-db.sqlite3
-geckodriver.log
 __pycache__
 *.pyc
+
+db.sqlite3
+geckodriver.log
+mypy.ini
 pyrightconfig.json
 typings
