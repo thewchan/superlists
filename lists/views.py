@@ -1,3 +1,7 @@
+"""Views to be served in the lists app."""
 from django.shortcuts import render
 
-# Create your views here.
+
+def home_page() -> None:
+    """Renders the hompage."""
+    pass
