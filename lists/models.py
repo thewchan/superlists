@@ -1,3 +1,7 @@
+"""Models in the list app."""
 from django.db import models
 
-# Create your models here.
+
+class Item(models.Model):
+    """Generic object for database ORM."""
+    text = models.TextField(default="")
