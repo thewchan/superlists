@@ -10,7 +10,13 @@ from lists.views import home_page
 class HomePageTest(TestCase):
     """Test for home page rendering."""
 
-    def test_home_page_returns_currect_html(self) -> None:
-        """Test if the home page response with the correct html."""
-        response = self.client.get("")
+    def test_uses_home_template(self) -> None:
+        """Test if the home page renders from template."""
+        response = self.client.get("/")
         self.assertTemplateUsed(response, "home.html")
+
+    def test_can_save_a_POST_request(self) -> None:
+        """Test if the home page can save the payload of a POST."""
+        response = self.client.post("", data={"item_text": "A new list item"})
+        self.assertIn("A new list item", response.content.decode())
+        self.assertTemplateUsed(response,  "home.html")
