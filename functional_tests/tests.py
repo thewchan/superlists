@@ -1,11 +1,12 @@
 """Function tests for the SuperList webapp."""
 import time
-import unittest
 
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-class NewVisitorTest(unittest.TestCase):
+
+class NewVisitorTest(LiveServerTestCase):
     """Test class related to new visitor to superlist."""
 
     def setUp(self) -> None:
@@ -28,7 +29,7 @@ class NewVisitorTest(unittest.TestCase):
         User story: Edith has hard about a cool new online to-do app.
          She goes to check out its homepage (continues in comments)
         """
-        self.browser.get("http://localhost:8000")
+        self.browser.get(self.live_server_url)
 
         # She notices the page title and header mention to-do lists
         self.assertIn("To-Do", self.browser.title)
@@ -65,10 +66,6 @@ class NewVisitorTest(unittest.TestCase):
         self.check_for_row_in_list_table(
                                      "2: Use peacock feathers to make a fly")
         self.fail("Finish the test!")
-
-
-if __name__ == "__main__":
-    unittest.main(warnings="ignore")
 
 
 # Edith wonders whether the site will remember her list. Then she sees
