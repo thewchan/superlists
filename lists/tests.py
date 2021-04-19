@@ -1,11 +1,7 @@
 """Unit tests for the lists app of superlist."""
-from django.http import HttpRequest
-from django.template.loader import render_to_string
 from django.test import TestCase
-from django.urls import resolve
 
 from lists.models import Item
-from lists.views import home_page
 
 
 class HomePageTest(TestCase):
@@ -28,7 +24,8 @@ class HomePageTest(TestCase):
         """Test if a POST request redirects back to home page."""
         response = self.client.post("", data={"item_text": "A new list item"})
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response["location"], "/")
+        self.assertEqual(response["location"],
+                         "/list/the-only-list-in-the-world")
 
     def test_only_saves_items_when_necessary(self) -> None:
         """Test database would only save items when needed."""
