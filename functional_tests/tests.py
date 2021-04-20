@@ -21,13 +21,7 @@ class NewVisitorTest(LiveServerTestCase):
         """Close browser windows after test completion."""
         self.browser.quit()
 
-    def check_for_row_in_list_table(self, row_text: str) -> None:
-        """Check if desired text is in list."""
-        table = self.browser.find_element_by_id("id_list_table")
-        rows = table.find_elements_by_tag_name("tr")
-        self.assertIn(row_text, [row.text for row in rows])
-
-    def wait_for_row_in_list_table(self, row_text):
+    def wait_for_row_in_list_table(self, row_text: str) -> None:
         """Wait for each row to appear in the app during testing."""
         start_time = time.time()
 
@@ -91,12 +85,14 @@ class NewVisitorTest(LiveServerTestCase):
         # Edith wonders whether the site will remember her list.
         self.browser.get(self.live_server_url)
         inputbox = self.browser.find_element_by_id("id_new_item")
-        inputbox.send_keys("Buy peacock features")
+        inputbox.send_keys("Buy peacock feathers")
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_row_in_list_table("1: Buy peacock feathers")
 
         # Then she sees that the site has generated a unique URL for her
         # - there is some explanatory text to that effect.
         edith_list_url: str = self.browser.current_url
-        self.assertRegex(edith_list_url, r"lists/.+")
+        self.assertRegex(edith_list_url, r"/lists/.+")
 
         # Now a new user, Francis, comes along to the site.
         # (We use a new browser session to make sure that no information
@@ -119,7 +115,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         # Francis gets his own unique URL
         francis_list_url: str = self.browser.current_url
-        self.assertRegex(francis_list_url, r"lists/.+")
+        self.assertRegex(francis_list_url, r"/lists/.+")
         self.assertNotEqual(francis_list_url, edith_list_url)
 
         # Again, tehre is no trace of Edith's list

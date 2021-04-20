@@ -25,21 +25,12 @@ class HomePageTest(TestCase):
         response = self.client.post("", data={"item_text": "A new list item"})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response["location"],
-                         "/list/the-only-list-in-the-world")
+                         "/lists/the-only-list-in-the-world/")
 
     def test_only_saves_items_when_necessary(self) -> None:
         """Test database would only save items when needed."""
         self.client.get("/")
         self.assertEqual(Item.objects.count(), 0)
-
-    def test_display_all_list_items(self) -> None:
-        """Test the to-do list would display all items in database."""
-        Item.objects.create(text="itemey 1")
-        Item.objects.create(text="itemey 2")
-
-        response = self.client.get("/")
-        self.assertIn("itemey 1", response.content.decode())
-        self.assertIn("itemey 2", response.content.decode())
 
 
 class ItemModelTest(TestCase):
@@ -62,3 +53,21 @@ class ItemModelTest(TestCase):
         second_saved_item = saved_items[1]
         self.assertEqual(first_saved_item.text, "The first (ever) list item")
         self.assertEqual(second_saved_item.text, "Item the second")
+
+
+class ListViewTest(TestCase):
+    """Test for new URL rendering."""
+
+    def test_uses_list_template(self) -> None:
+        """Test that list is using a different URL."""
+        response = self.client.get("/lists/the-only-list-in-the-world/")
+        self.assertTemplateUsed(response, "list.html")
+
+    def test_display_all_items(self) -> None:
+        """Test the to-do list would display all items in database."""
+        Item.objects.create(text="itemey 1")
+        Item.objects.create(text="itemey 2")
+
+        response = self.client.get("/lists/the-only-list-in-the-world/")
+        self.assertContains(response, "itemey 1")
+        self.assertContains(response, "itemey 2")
