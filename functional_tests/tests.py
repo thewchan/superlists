@@ -18,6 +18,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         """Set up browser for unit tests."""
         self.browser = webdriver.Firefox()
         staging_server = os.environ.get("STAGING_SERVER")
+        print("\n" + staging_server)
         if staging_server:
             self.live_server_url = f"http://{staging_server}"
 
