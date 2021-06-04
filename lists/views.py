@@ -1,3 +1,6 @@
+"""Django views for to-do list app"""
 from django.shortcuts import render
 
-# Create your views here.
+
+def home_page():
+    """Renders home page."""
