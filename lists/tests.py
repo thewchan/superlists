@@ -1,24 +1,20 @@
-"""Unit test suites for to-do list."""
-from django.http import HttpRequest
+"""Test suite for list app."""
 from django.test import TestCase
-from django.urls import resolve
-
-from lists.views import home_page
 
 
 class HomePageTest(TestCase):
-    """Test suit for home page."""
+    """Test suite for to-do list homepage."""
 
-    def test_root_url_resolves_to_home_page_view(self):
-        """Test correct url resolution to home page."""
-        found = resolve("/")
-        self.assertEqual(found.func, home_page)
+    def test_uses_home_template(self) -> None:
+        """Test for homepage rendering."""
+        response = self.client.get("/")
+        self.assertTemplateUsed(response, "home.html")
 
-    def test_home_page_returns_correct_html(self):
-        """Test correct rendering of home page."""
-        request = HttpRequest()
-        response = home_page(request)
+    def test_home_page_returns_correct_html(self) -> None:
+        """Test the home page links to correct html code."""
+        response = self.client.get("/")
         html = response.content.decode("utf8")
         self.assertTrue(html.startswith("<html>"))
         self.assertIn("<title>To-Do lists</title>", html)
-        self.assertTrue(html.endswith("</html>"))
+        self.assertTrue(html.strip().endswith("</html>"))
+        self.assertTemplateUsed(response, "home.html")
