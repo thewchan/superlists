@@ -11,22 +11,6 @@ class HomePageTest(TestCase):
         response = self.client.get("/")
         self.assertTemplateUsed(response, "home.html")
 
-    def test_can_save_a_POST_request(self) -> None:  # noqa: N802
-        """Test that a POST request can be saved."""
-        self.client.post("/", data={"item_text": "A new list item"})
-
-        self.assertEqual(Item.objects.count(), 1)
-        new_item = Item.objects.first()
-        self.assertEqual(new_item.text, "A new list item")
-
-    def test_redirects_after_POST(self) -> None:  # noqa: N802
-        """Test redirection after a POST request."""
-        response = self.client.post("/", data={"item_text": "A new list item"})
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(
-            response["location"], "/lists/the-only-list-in-the-world/"
-        )
-
     def test_home_page_returns_correct_html(self) -> None:
         """Test the home page links to correct html code."""
         response = self.client.get("/")
@@ -35,11 +19,6 @@ class HomePageTest(TestCase):
         self.assertIn("<title>To-Do lists</title>", html)
         self.assertTrue(html.strip().endswith("</html>"))
         self.assertTemplateUsed(response, "home.html")
-
-    def test_only_saves_items_when_necessary(self) -> None:
-        """Test to-do list items are saved appropriately."""
-        self.client.get("/")
-        self.assertEqual(Item.objects.count(), 0)
 
 
 class ItemModelTest(TestCase):
@@ -81,3 +60,21 @@ class ListViewTest(TestCase):
 
         self.assertContains(response, "itemey 1")
         self.assertContains(response, "itemey 2")
+
+
+class NewListTest(TestCase):
+    """Test suite for initializing new to-do lists."""
+
+    def test_can_save_a_POST_request(self) -> None:  # noqa: N802
+        """Test a POST request is correctly saved."""
+        self.client.post("/lists/new", data={"item_text": "A new list item"})
+        self.assertEqual(Item.objects.count(), 1)
+        new_item = Item.objects.first()
+        self.assertEqual(new_item.text, "A new list item")
+
+    def test_redirects_after_POST(self) -> None:  # noqa: N802
+        """Test correct redirection after a POST request."""
+        response = self.client.post(
+            "/lists/new", data={"item_text": "A new list item"}
+        )
+        self.assertRedirects(response, "/lists/the-only-list-in-the-world/")
