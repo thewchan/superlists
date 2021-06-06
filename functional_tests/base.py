@@ -6,6 +6,7 @@ from typing import Callable
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.remote.webelement import WebElement
 
 MAX_WAIT = 10
 
@@ -56,3 +57,7 @@ class FunctionalTest(StaticLiveServerTestCase):
                     raise error
 
                 time.sleep(0.5)
+
+    def get_item_input_box(self) -> WebElement:
+        """Return input box of list item."""
+        return self.browser.find_element_by_id("id_text")
