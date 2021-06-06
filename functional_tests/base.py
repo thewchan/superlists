@@ -1,6 +1,7 @@
 """Functional tests helper functions."""
 import os
 import time
+from typing import Callable
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
@@ -37,6 +38,21 @@ class FunctionalTest(StaticLiveServerTestCase):
 
             except (AssertionError, WebDriverException) as error:
                 if time.time() - start_time > MAX_WAIT:
+                    raise error
+
+                time.sleep(0.5)
+
+    def wait_for(self, fn: Callable) -> None:
+        """Wait for generic response."""
+        start_time = time.time()
+
+        while True:
+            try:
+                return fn()
+
+            except (AssertionError, WebDriverException) as error:
+                if time.time() - start_time > MAX_WAIT:
+
                     raise error
 
                 time.sleep(0.5)
