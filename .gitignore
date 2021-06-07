@@ -3,6 +3,6 @@ geckodriver.log
 typings
 __pycache__
 *.pyc
-static
+/static
 .env
 .eslintrc.json
