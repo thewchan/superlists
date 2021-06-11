@@ -1,4 +1,3 @@
-"""Test suite for returning users."""
 from django.conf import settings
 from django.contrib.auth import (
     BACKEND_SESSION_KEY,
@@ -8,6 +7,10 @@ from django.contrib.auth import (
 from django.contrib.sessions.backends.db import SessionStore
 
 from .base import FunctionalTest
+from .management.commands.create_session import (
+    create_pre_authenticated_session,
+)
+from .server_tools import create_session_on_server
 
 
 User = get_user_model()
@@ -18,21 +21,19 @@ class MyListsTest(FunctionalTest):
 
     def create_pre_authenticated_session(self, email: str) -> None:
         """Create a to-do list that's already preauthenticated."""
-        user = User.objects.create(email=email)
-        session = SessionStore()
-        session[SESSION_KEY] = user.pk
-        session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
-        session.save()
+        if self.staging_server:
+            session_key = create_session_on_server(self.staging_server, email)
 
-        # Set a cookie by visiting the domain first via a 404 page
+        else:
+            session_key = create_pre_authenticated_session(email)
+
+        # To set a cookie we need to first visit the domain.
         self.browser.get(self.live_server_url + "/404_no_such_url/")
-        self.browser.add_cookie(
-            dict(
-                name=settings.SESSION_COOKIE_NAME,
-                value=session.session_key,
-                path="/",
-            )
-        )
+        self.browser.add_cookie(dict(
+            name=settings.SESSION_COOKIE_NAME,
+            value=session_key,
+            path="/"
+        ))
 
     def test_logged_in_users_lists_are_saved_as_my_lists(self) -> None:
         """Test that user's to-do lists are saved."""
